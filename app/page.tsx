@@ -3,9 +3,26 @@
 import { useState, useEffect } from "react";
 import { questions } from "./questions";
 
+const StrikeDisplay = ({ strikes }: { strikes: number }) => {
+  if (strikes === 0) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="flex gap-4">
+        {Array.from({ length: strikes }).map((_, i) => (
+          <div key={i} className="text-[15rem] font-bold text-red-500 animate-pulse">
+            X
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default function GameBoard() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [revealed, setRevealed] = useState<boolean[]>([]);
+  const [strikes, setStrikes] = useState(0);
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -24,6 +41,9 @@ export default function GameBoard() {
           newRevealed[payload] = !newRevealed[payload];
           return newRevealed;
         });
+      } else if (action === "STRIKE") {
+        setStrikes(payload);
+        setTimeout(() => setStrikes(0), 3000); // Hide after 3 seconds
       }
     };
     return () => channel.close();
@@ -40,6 +60,7 @@ export default function GameBoard() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-blue-950 p-4 font-sans text-white">
+      <StrikeDisplay strikes={strikes} />
       <div className="w-full max-w-5xl space-y-6">
         {/* Header / Score Board */}
         <div className="flex items-center justify-between rounded-lg border-2 border-yellow-400 bg-blue-900 p-4 shadow-lg">
