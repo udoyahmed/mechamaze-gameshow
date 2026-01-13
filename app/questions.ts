@@ -12,7 +12,7 @@ export type Question = {
 export const questions: Question[] = [
   {
     id: 1,
-    text: "Career choice",
+    text: "Career choice after BUET",
     answers: [
       { text: "Research/Higher Studies/Masters", points: 35 },
       { text: "BCS/Govt Job", points: 20 },

@@ -78,7 +78,7 @@ export default function GameBoard() {
         </div>
 
         {/* Answers Grid */}
-        <div className="grid grid-cols-2 grid-rows-4 grid-flow-col gap-4">
+        <div className="grid grid-cols-1 gap-4">
           {/* Render actual answers */}
           {currentQuestion.answers.map((answer, index) => (
             <div
@@ -109,7 +109,7 @@ export default function GameBoard() {
           ))}
 
           {/* Empty slots to maintain grid structure (optional, usually 8 slots total) */}
-          {Array.from({ length: Math.max(0, 8 - currentQuestion.answers.length) }).map((_, i) => (
+          {Array.from({ length: Math.max(0, 5 - currentQuestion.answers.length) }).map((_, i) => (
             <div key={`empty-${i}`} className="h-20 rounded-md border-2 border-blue-900/30 bg-blue-900/20"></div>
           ))}
         </div>
