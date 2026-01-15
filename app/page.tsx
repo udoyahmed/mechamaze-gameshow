@@ -33,12 +33,13 @@ export default function GameBoard() {
     console.log("Main: Initializing Pusher");
     const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
       cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+      authEndpoint: '/api/pusher/auth',
     });
     pusherRef.current = pusher;
 
-    const channel = pusher.subscribe("mechamaze");
+    const channel = pusher.subscribe("private-mechamaze");
     channel.bind("pusher:subscription_succeeded", () => {
-      console.log("Main: Subscribed to mechamaze");
+      console.log("Main: Subscribed to private-mechamaze");
     });
     channel.bind("pusher:subscription_error", (error: any) => {
       console.log("Main: Subscription error", error);
@@ -64,7 +65,7 @@ export default function GameBoard() {
 
     return () => {
       channel.unbind_all();
-      pusher.unsubscribe("mechamaze");
+      pusher.unsubscribe("private-mechamaze");
       pusher.disconnect();
     };
   }, []);

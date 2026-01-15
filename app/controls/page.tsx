@@ -17,20 +17,21 @@ export default function Controls() {
     console.log("Control: Initializing Pusher");
     const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
       cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+      authEndpoint: '/api/pusher/auth',
     });
     pusherRef.current = pusher;
 
-    const channel = pusher.subscribe("mechamaze");
+    const channel = pusher.subscribe("private-mechamaze");
     channelRef.current = channel;
     channel.bind("pusher:subscription_succeeded", () => {
-      console.log("Control: Subscribed to mechamaze");
+      console.log("Control: Subscribed to private-mechamaze");
     });
     channel.bind("pusher:subscription_error", (error: any) => {
       console.log("Control: Subscription error", error);
     });
 
     return () => {
-      pusher.unsubscribe("mechamaze");
+      pusher.unsubscribe("private-mechamaze");
       pusher.disconnect();
     };
   }, []);
