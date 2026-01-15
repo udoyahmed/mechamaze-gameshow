@@ -10,8 +10,14 @@ const pusher = new Pusher({
 });
 
 export async function POST(request: NextRequest) {
-  const { socket_id, channel_name } = await request.json();
-
-  const auth = pusher.authenticate(socket_id, channel_name);
-  return NextResponse.json(auth);
+  try {
+    const { socket_id, channel_name } = await request.json();
+    console.log('Auth request:', socket_id, channel_name);
+    const auth = pusher.authenticate(socket_id, channel_name);
+    console.log('Auth response:', auth);
+    return NextResponse.json(auth);
+  } catch (error) {
+    console.error('Auth error:', error);
+    return NextResponse.json({ error: 'Auth failed' }, { status: 500 });
+  }
 }
