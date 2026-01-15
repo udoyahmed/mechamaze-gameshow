@@ -88,13 +88,13 @@ export default function Controls() {
 
     return (
 
-      <div className="min-h-screen bg-gray-900 p-8 text-white font-sans">
+      <div className="min-h-screen bg-gray-900 p-4 md:p-8 text-white font-sans">
 
-        <h1 className="mb-8 text-3xl font-bold text-yellow-400">Game Controller</h1>
+        <h1 className="mb-8 text-2xl md:text-3xl font-bold text-yellow-400">Game Controller</h1>
 
         
 
-        <div className="mb-8 flex gap-4">
+        <div className="mb-8 flex flex-col sm:flex-row gap-4">
 
           <button
 
@@ -102,7 +102,7 @@ export default function Controls() {
 
             disabled={currentQuestionIndex === 0}
 
-            className="rounded bg-blue-600 px-4 py-2 font-bold hover:bg-blue-500 disabled:opacity-50"
+            className="rounded bg-blue-600 px-4 py-2 font-bold hover:bg-blue-500 disabled:opacity-50 flex-1 sm:flex-none"
 
           >
 
@@ -116,7 +116,7 @@ export default function Controls() {
 
             disabled={currentQuestionIndex === questions.length - 1}
 
-            className="rounded bg-blue-600 px-4 py-2 font-bold hover:bg-blue-500 disabled:opacity-50"
+            className="rounded bg-blue-600 px-4 py-2 font-bold hover:bg-blue-500 disabled:opacity-50 flex-1 sm:flex-none"
 
           >
 
@@ -128,13 +128,13 @@ export default function Controls() {
 
   
 
-        <div className="mb-8 flex gap-4">
+        <div className="mb-8 flex flex-col sm:flex-row gap-4">
 
           <button
 
             onClick={() => handleStrike(1)}
 
-            className="rounded bg-red-600 px-4 py-2 font-bold hover:bg-red-500"
+            className="rounded bg-red-600 px-4 py-2 font-bold hover:bg-red-500 flex-1 sm:flex-none"
 
           >
 
@@ -146,7 +146,7 @@ export default function Controls() {
 
             onClick={() => handleStrike(2)}
 
-            className="rounded bg-red-600 px-4 py-2 font-bold hover:bg-red-500"
+            className="rounded bg-red-600 px-4 py-2 font-bold hover:bg-red-500 flex-1 sm:flex-none"
 
           >
 
@@ -158,7 +158,7 @@ export default function Controls() {
 
             onClick={() => handleStrike(3)}
 
-            className="rounded bg-red-600 px-4 py-2 font-bold hover:bg-red-500"
+            className="rounded bg-red-600 px-4 py-2 font-bold hover:bg-red-500 flex-1 sm:flex-none"
 
           >
 
@@ -170,9 +170,9 @@ export default function Controls() {
 
   
 
-        <div className="rounded-lg bg-gray-800 p-6 border border-gray-700">
+        <div className="rounded-lg bg-gray-800 p-4 md:p-6 border border-gray-700">
 
-          <h2 className="mb-4 text-xl font-bold text-gray-300">
+          <h2 className="mb-4 text-lg md:text-xl font-bold text-gray-300">
 
             Q{currentQuestionIndex + 1}: {currentQuestion.text}
 
@@ -184,9 +184,9 @@ export default function Controls() {
 
             {currentQuestion.answers.map((answer, index) => (
 
-              <div key={index} className="flex items-center justify-between rounded bg-gray-700 p-3">
+              <div key={index} className="flex flex-col sm:flex-row sm:items-center sm:justify-between rounded bg-gray-700 p-3 gap-2">
 
-                <span className="font-medium text-lg">
+                <span className="font-medium text-base md:text-lg">
 
                   {answer.text} ({answer.points})
 
@@ -196,7 +196,7 @@ export default function Controls() {
 
                   onClick={() => handleReveal(index)}
 
-                  className={`min-w-[100px] rounded px-3 py-1 font-bold transition-colors ${
+                  className={`min-w-[100px] rounded px-3 py-1 font-bold transition-colors self-start sm:self-auto ${
 
                     revealed[index]
 
