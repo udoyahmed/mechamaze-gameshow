@@ -16,7 +16,9 @@ export async function POST(request: NextRequest) {
       useTLS: true,
     });
 
-    const { socket_id, channel_name } = await request.json();
+    const formData = await request.formData();
+    const socket_id = formData.get('socket_id') as string;
+    const channel_name = formData.get('channel_name') as string;
     console.log('Auth request:', socket_id, channel_name);
     const auth = pusher.authenticate(socket_id, channel_name);
     console.log('Auth response:', auth);
