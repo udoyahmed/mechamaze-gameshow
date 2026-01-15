@@ -1,16 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Pusher from 'pusher';
 
-const pusher = new Pusher({
-  appId: process.env.PUSHER_APP_ID!,
-  key: process.env.NEXT_PUBLIC_PUSHER_KEY!,
-  secret: process.env.PUSHER_SECRET!,
-  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
-  useTLS: true,
-});
-
 export async function POST(request: NextRequest) {
   try {
+    if (!process.env.PUSHER_APP_ID || !process.env.NEXT_PUBLIC_PUSHER_KEY || !process.env.PUSHER_SECRET || !process.env.NEXT_PUBLIC_PUSHER_CLUSTER) {
+      console.error('Missing env vars');
+      return NextResponse.json({ error: 'Missing environment variables' }, { status: 500 });
+    }
+
+    const pusher = new Pusher({
+      appId: process.env.PUSHER_APP_ID,
+      key: process.env.NEXT_PUBLIC_PUSHER_KEY,
+      secret: process.env.PUSHER_SECRET,
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
+      useTLS: true,
+    });
+
     const { socket_id, channel_name } = await request.json();
     console.log('Auth request:', socket_id, channel_name);
     const auth = pusher.authenticate(socket_id, channel_name);
