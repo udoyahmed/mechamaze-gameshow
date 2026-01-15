@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Pusher from "pusher-js";
 import { questions } from "./questions";
 
 const StrikeDisplay = ({ strikes }: { strikes: number }) => {
@@ -23,14 +24,20 @@ export default function GameBoard() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [revealed, setRevealed] = useState<boolean[]>([]);
   const [strikes, setStrikes] = useState(0);
+  const pusherRef = useRef<Pusher | null>(null);
 
   const currentQuestion = questions[currentQuestionIndex];
 
-  // Listen for commands from the controller page
+  // Initialize Pusher
   useEffect(() => {
-    const channel = new BroadcastChannel("family_feud_controller");
-    channel.onmessage = (event) => {
-      const { action, payload } = event.data;
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+    });
+    pusherRef.current = pusher;
+
+    const channel = pusher.subscribe("game-channel");
+    channel.bind("client-command", (data: { action: string; payload?: any }) => {
+      const { action, payload } = data;
       if (action === "NEXT") {
         setCurrentQuestionIndex((prev) => (prev < questions.length - 1 ? prev + 1 : prev));
       } else if (action === "PREV") {
@@ -45,8 +52,13 @@ export default function GameBoard() {
         setStrikes(payload);
         setTimeout(() => setStrikes(0), 3000); // Hide after 3 seconds
       }
+    });
+
+    return () => {
+      channel.unbind_all();
+      pusher.unsubscribe("game-channel");
+      pusher.disconnect();
     };
-    return () => channel.close();
   }, []);
 
   useEffect(() => {

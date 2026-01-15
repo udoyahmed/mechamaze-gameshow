@@ -1,20 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Pusher from "pusher-js";
 import { questions } from "../questions";
 
 export default function Controls() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [revealed, setRevealed] = useState<boolean[]>([]);
-  const [channel, setChannel] = useState<BroadcastChannel | null>(null);
+  const pusherRef = useRef<Pusher | null>(null);
 
   const currentQuestion = questions[currentQuestionIndex];
 
-  // Initialize Broadcast Channel
+  // Initialize Pusher
   useEffect(() => {
-    const bc = new BroadcastChannel("family_feud_controller");
-    setChannel(bc);
-    return () => bc.close();
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+    });
+    pusherRef.current = pusher;
+    return () => pusher.disconnect();
   }, []);
 
   // Reset local revealed state when question changes
@@ -23,7 +26,13 @@ export default function Controls() {
   }, [currentQuestionIndex, currentQuestion.answers.length]);
 
   const sendCommand = (action: string, payload?: any) => {
-    channel?.postMessage({ action, payload });
+    const channel = pusherRef.current?.channel("game-channel");
+    if (channel) {
+      channel.trigger("client-command", { action, payload });
+    } else {
+      // If not subscribed, trigger directly
+      pusherRef.current?.send_event("client-command", { action, payload }, "game-channel");
+    }
   };
 
   const handleNext = () => {
