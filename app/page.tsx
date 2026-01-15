@@ -30,14 +30,18 @@ export default function GameBoard() {
 
   // Initialize Pusher
   useEffect(() => {
+    console.log("Main: Initializing Pusher");
     const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
       cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
     });
     pusherRef.current = pusher;
 
-    const channel = pusher.subscribe("game-channel");
+    const channel = pusher.subscribe("mechamaze");
     channel.bind("pusher:subscription_succeeded", () => {
-      console.log("Main: Subscribed to game-channel");
+      console.log("Main: Subscribed to mechamaze");
+    });
+    channel.bind("pusher:subscription_error", (error: any) => {
+      console.log("Main: Subscription error", error);
     });
     channel.bind("client-command", (data: { action: string; payload?: any }) => {
       console.log("Main: Received command", data);
@@ -60,7 +64,7 @@ export default function GameBoard() {
 
     return () => {
       channel.unbind_all();
-      pusher.unsubscribe("game-channel");
+      pusher.unsubscribe("mechamaze");
       pusher.disconnect();
     };
   }, []);

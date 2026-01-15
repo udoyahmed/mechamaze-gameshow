@@ -14,19 +14,23 @@ export default function Controls() {
 
   // Initialize Pusher
   useEffect(() => {
+    console.log("Control: Initializing Pusher");
     const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
       cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
     });
     pusherRef.current = pusher;
 
-    const channel = pusher.subscribe("game-channel");
+    const channel = pusher.subscribe("mechamaze");
     channelRef.current = channel;
     channel.bind("pusher:subscription_succeeded", () => {
-      console.log("Control: Subscribed to game-channel");
+      console.log("Control: Subscribed to mechamaze");
+    });
+    channel.bind("pusher:subscription_error", (error: any) => {
+      console.log("Control: Subscription error", error);
     });
 
     return () => {
-      pusher.unsubscribe("game-channel");
+      pusher.unsubscribe("mechamaze");
       pusher.disconnect();
     };
   }, []);
