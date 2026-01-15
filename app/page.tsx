@@ -36,7 +36,11 @@ export default function GameBoard() {
     pusherRef.current = pusher;
 
     const channel = pusher.subscribe("game-channel");
+    channel.bind("pusher:subscription_succeeded", () => {
+      console.log("Main: Subscribed to game-channel");
+    });
     channel.bind("client-command", (data: { action: string; payload?: any }) => {
+      console.log("Main: Received command", data);
       const { action, payload } = data;
       if (action === "NEXT") {
         setCurrentQuestionIndex((prev) => (prev < questions.length - 1 ? prev + 1 : prev));

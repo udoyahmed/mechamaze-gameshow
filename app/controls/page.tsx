@@ -8,6 +8,7 @@ export default function Controls() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [revealed, setRevealed] = useState<boolean[]>([]);
   const pusherRef = useRef<Pusher | null>(null);
+  const channelRef = useRef<any>(null);
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -17,7 +18,17 @@ export default function Controls() {
       cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
     });
     pusherRef.current = pusher;
-    return () => pusher.disconnect();
+
+    const channel = pusher.subscribe("game-channel");
+    channelRef.current = channel;
+    channel.bind("pusher:subscription_succeeded", () => {
+      console.log("Control: Subscribed to game-channel");
+    });
+
+    return () => {
+      pusher.unsubscribe("game-channel");
+      pusher.disconnect();
+    };
   }, []);
 
   // Reset local revealed state when question changes
@@ -26,12 +37,9 @@ export default function Controls() {
   }, [currentQuestionIndex, currentQuestion.answers.length]);
 
   const sendCommand = (action: string, payload?: any) => {
-    const channel = pusherRef.current?.channel("game-channel");
-    if (channel) {
-      channel.trigger("client-command", { action, payload });
-    } else {
-      // If not subscribed, trigger directly
-      pusherRef.current?.send_event("client-command", { action, payload }, "game-channel");
+    if (channelRef.current) {
+      channelRef.current.trigger("client-command", { action, payload });
+      console.log("Control: Sent command", action, payload);
     }
   };
 
