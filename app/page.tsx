@@ -87,10 +87,15 @@ export default function GameBoard() {
       {!gameStarted && (
         <main className="flex min-h-screen flex-col items-center justify-center bg-blue-950 p-4 font-sans text-white">
           <div className="text-center">
-            <h1 className="text-6xl font-bold text-yellow-400 mb-8 drop-shadow-lg">
+            <img 
+              src="https://i.postimg.cc/g0cxwtN6/logo4.png" 
+              alt="Mechamaze Logo"
+              className="w-full max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl h-auto mb-6 drop-shadow-2xl"
+            />
+            {/* <h1 className="text-4xl md:text-6xl font-bold text-yellow-400 mb-6 drop-shadow-lg">
               MECHAMAZE
-            </h1>
-            <p className="text-xl text-blue-200">
+            </h1> */}
+            <p className="text-xl md:text-2xl text-[#af987b]">
               Game Show
             </p>
           </div>
