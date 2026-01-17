@@ -24,6 +24,7 @@ export default function GameBoard() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [revealed, setRevealed] = useState<boolean[]>([]);
   const [strikes, setStrikes] = useState(0);
+  const [gameStarted, setGameStarted] = useState(false);
   const pusherRef = useRef<Pusher | null>(null);
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -60,6 +61,8 @@ export default function GameBoard() {
       } else if (action === "STRIKE") {
         setStrikes(payload);
         setTimeout(() => setStrikes(0), 3000); // Hide after 3 seconds
+      } else if (action === "START") {
+        setGameStarted(true);
       }
     });
 
@@ -80,63 +83,79 @@ export default function GameBoard() {
   }, 0);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-blue-950 p-4 font-sans text-white">
-      <StrikeDisplay strikes={strikes} />
-      <div className="w-full max-w-5xl space-y-6">
-        {/* Header / Score Board */}
-        <div className="flex items-center justify-between rounded-lg border-2 border-yellow-400 bg-blue-900 p-4 shadow-lg">
-          <div className="text-2xl font-bold text-yellow-400">MECHAMAZE</div>
-          <div className="text-xl font-bold">
-            BOARD SCORE: <span className="text-yellow-400">{currentScore}</span>
+    <>
+      {!gameStarted && (
+        <main className="flex min-h-screen flex-col items-center justify-center bg-blue-950 p-4 font-sans text-white">
+          <div className="text-center">
+            <h1 className="text-6xl font-bold text-yellow-400 mb-8 drop-shadow-lg">
+              MECHAMAZE
+            </h1>
+            <p className="text-xl text-blue-200">
+              Game Show
+            </p>
           </div>
-        </div>
-
-        {/* Question Display */}
-        <div className="rounded-xl border-4 border-blue-400 bg-blue-800 p-8 text-center shadow-2xl">
-          <h1 className="text-2xl font-bold uppercase tracking-wide text-white drop-shadow-md md:text-4xl">
-            {currentQuestion.text}
-          </h1>
-        </div>
-
-        {/* Answers Grid */}
-        <div className="grid grid-cols-1 gap-4">
-          {/* Render actual answers */}
-          {currentQuestion.answers.map((answer, index) => (
-            <div
-              key={index}
-              className="relative h-20"
-            >
-              <div className="relative h-full w-full overflow-hidden rounded-md border-2 border-white shadow-lg">
-                {revealed[index] ? (
-                  // Revealed State
-                  <div className="flex h-full items-center justify-between bg-gradient-to-b from-blue-600 to-blue-800 px-4">
-                    <span className="text-lg font-bold uppercase text-white drop-shadow-sm md:text-xl">
-                      {answer.text}
-                    </span>
-                    <div className="flex h-12 w-14 items-center justify-center border-2 border-white bg-blue-950 text-xl font-bold text-white shadow-inner">
-                      {answer.points}
-                    </div>
-                  </div>
-                ) : (
-                  // Hidden State
-                  <div className="flex h-full items-center justify-center bg-gradient-to-b from-blue-700 to-blue-900">
-                    <div className="flex h-10 w-14 items-center justify-center rounded-full border-2 border-blue-400 bg-blue-900 text-xl font-bold text-white shadow-inner">
-                      {index + 1}
-                    </div>
-                  </div>
-                )}
+        </main>
+      )}
+      {gameStarted && (
+        <main className="flex min-h-screen flex-col items-center justify-center bg-blue-950 p-4 font-sans text-white">
+          <StrikeDisplay strikes={strikes} />
+          <div className="w-full max-w-5xl space-y-6">
+            {/* Header / Score Board */}
+            <div className="flex items-center justify-between rounded-lg border-2 border-yellow-400 bg-blue-900 p-4 shadow-lg">
+              <div className="text-2xl font-bold text-yellow-400">MECHAMAZE</div>
+              <div className="text-xl font-bold">
+                BOARD SCORE: <span className="text-yellow-400">{currentScore}</span>
               </div>
             </div>
-          ))}
 
-          {/* Empty slots to maintain grid structure (optional, usually 8 slots total) */}
-          {Array.from({ length: Math.max(0, 5 - currentQuestion.answers.length) }).map((_, i) => (
-            <div key={`empty-${i}`} className="h-20 rounded-md border-2 border-blue-900/30 bg-blue-900/20"></div>
-          ))}
-        </div>
+            {/* Question Display */}
+            <div className="rounded-xl border-4 border-blue-400 bg-blue-800 p-8 text-center shadow-2xl">
+              <h1 className="text-2xl font-bold uppercase tracking-wide text-white drop-shadow-md md:text-4xl">
+                {currentQuestion.text}
+              </h1>
+            </div>
 
-        
-      </div>
-    </main>
+            {/* Answers Grid */}
+            <div className="grid grid-cols-1 gap-4">
+              {/* Render actual answers */}
+              {currentQuestion.answers.map((answer, index) => (
+                <div
+                  key={index}
+                  className="relative h-20"
+                >
+                  <div className="relative h-full w-full overflow-hidden rounded-md border-2 border-white shadow-lg">
+                    {revealed[index] ? (
+                      // Revealed State
+                      <div className="flex h-full items-center justify-between bg-gradient-to-b from-blue-600 to-blue-800 px-4">
+                        <span className="text-lg font-bold uppercase text-white drop-shadow-sm md:text-xl">
+                          {answer.text}
+                        </span>
+                        <div className="flex h-12 w-14 items-center justify-center border-2 border-white bg-blue-950 text-xl font-bold text-white shadow-inner">
+                          {answer.points}
+                        </div>
+                      </div>
+                    ) : (
+                      // Hidden State
+                      <div className="flex h-full items-center justify-center bg-gradient-to-b from-blue-700 to-blue-900">
+                        <div className="flex h-10 w-14 items-center justify-center rounded-full border-2 border-blue-400 bg-blue-900 text-xl font-bold text-white shadow-inner">
+                          {index + 1}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {/* Empty slots to maintain grid structure (optional, usually 8 slots total) */}
+              {Array.from({ length: Math.max(0, 5 - currentQuestion.answers.length) }).map((_, i) => (
+                <div key={`empty-${i}`} className="h-20 rounded-md border-2 border-blue-900/30 bg-blue-900/20"></div>
+              ))}
+            </div>
+
+
+          </div>
+        </main>
+      )}
+    </>
   );
 }

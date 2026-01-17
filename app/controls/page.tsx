@@ -84,7 +84,9 @@ export default function Controls() {
 
     };
 
-  
+    const handleStart = () => {
+      sendCommand("START");
+    };
 
     return (
 
@@ -92,8 +94,15 @@ export default function Controls() {
 
         <h1 className="mb-8 text-2xl md:text-3xl font-bold text-yellow-400">Game Controller</h1>
 
+        <div className="mb-8">
+          <button
+            onClick={handleStart}
+            className="w-full rounded bg-green-600 px-4 py-3 font-bold hover:bg-green-500 text-lg"
+          >
+            Start Game
+          </button>
+        </div>
         
-
         <div className="mb-8 flex flex-col sm:flex-row gap-4">
 
           <button
